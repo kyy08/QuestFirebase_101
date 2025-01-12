@@ -191,5 +191,77 @@ fun OnLoading(modifier: Modifier = Modifier) {
     )
 }
 
+@Composable
+fun HomeStatus (
+    homeUiState: HomeUiState,
+    retryAction: () -> Unit,
+    modifier: Modifier = Modifier,
+    onDetailClick: (String) -> Unit = {},
+    onDeleteClick: (Mahasiswa) -> Unit = {}
+) {
+    var deleteConfirmationRequired by rememberSaveable { mutableStateOf<Mahasiswa?>(null) }
+    when (homeUiState) {
+        is HomeUiState.Loading -> OnLoading(modifier = modifier.fillMaxSize())
+        is HomeUiState.Success -> {
+            ListMahasiswa(
+                listMhs = homeUiState.data,
+                onClick = { onDetailClick(it) },
+                onDeleteClick = {
+                    deleteConfirmationRequired = it
+                }
+            )
+            deleteConfirmationRequired?.let { data ->
+                DeleteConfirmationDialog(
+                    onDeleteConfirm = {
+                        onDeleteClick(data)
+                        deleteConfirmationRequired = null
+                    },
+                    onDeleteCancel = {
+                        deleteConfirmationRequired = null
+                    })
+            }
+        }
+        is HomeUiState.Error -> OnError(
+            message = homeUiState.e.localizedMessage?: "error",
+            retryAction = retryAction,
+            modifier = modifier.fillMaxWidth()
+        )
+    }
+}
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun HomeScreen(
+    navigateToltemEntry: () -> Unit,
+    modifier: Modifier = Modifier,
+    onDetailClick: (String) -> Unit = {},
+    viewModel: HomeViewModel = viewModel(factory = PenyediaViewModel.Factory)
+) {
+    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+    Scaffold (
+        modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+        topBar = {
+
+        },
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = navigateToltemEntry,
+                shape = MaterialTheme.shapes.medium,
+                modifier = Modifier.padding(18.dp)
+            ) {
+                Icon(imageVector = Icons.Default.Add, contentDescription = "Add Mahasiswa")
+            }
+        }
+    ) {
+            innerPadding ->
+        HomeStatus(
+            homeUiState = viewModel.mhsUiState,
+            retryAction = {viewModel.getMhs()},modifier = Modifier.padding(innerPadding),
+            onDetailClick = onDetailClick,
+            onDeleteClick = {
+                viewModel.deleteMhs(it)
+            }
+        )
+    }
+}
 
