@@ -75,3 +75,66 @@ private fun DeleteConfirmationDialog(
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun CardMhs(
+    mhs: Mahasiswa,
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit = { },
+    onDeleteClick: (Mahasiswa) -> Unit = {}
+) {
+    Card(
+        onClick = onClick,
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(8.dp)
+    ) {
+        Column(
+            modifier = Modifier.padding(8.dp)
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(imageVector = Icons.Filled.Person, contentDescription = "")
+                Spacer(modifier = Modifier.padding(4.dp))
+                Text(
+                    text = mhs.nama,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 20.sp
+                )
+            }
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(imageVector = Icons.Filled.AccountCircle, contentDescription = "")
+                Spacer(modifier = Modifier.padding(4.dp))
+                Text(
+                    text = mhs.nim,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 16.sp
+                )
+                Spacer(modifier = Modifier.padding(4.dp))
+                IconButton(
+                    onClick = { onDeleteClick(mhs)
+                        Log.d("CardMhs", "Mhs berhasil dihapus: $mhs")
+                    }
+                ) {
+                    Icon(imageVector = Icons.Filled.Delete, contentDescription = "")
+                }
+            }
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(imageVector = Icons.Filled.Home, contentDescription = "")
+                Spacer(modifier = Modifier.padding(4.dp))
+                Text(
+                    text = mhs.kelas,
+                    fontWeight = FontWeight.Bold,
+                )
+            }
+        }
+    }
+}
