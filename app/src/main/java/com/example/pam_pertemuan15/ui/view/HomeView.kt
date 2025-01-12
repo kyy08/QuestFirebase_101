@@ -161,3 +161,35 @@ fun ListMahasiswa(
         )
     }
 }
+
+@Composable
+fun OnError(
+    retryAction:() -> Unit,
+    modifier: Modifier = Modifier,
+    message: String
+) {
+    Column (
+        modifier = modifier,
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Image(
+            painter = painterResource(id = R.drawable.ic_connection_error), contentDescription = ""
+        )
+        Text(text = message, modifier = Modifier.padding(16.dp))
+        Button(onClick = retryAction) {
+            Text("Coba Lagi")
+        }
+    }
+}
+@Composable
+fun OnLoading(modifier: Modifier = Modifier) {
+    Image (
+        modifier = modifier.size(200.dp),
+        painter = painterResource(R.drawable.loading),
+        contentDescription = ""
+    )
+}
+
+
+
