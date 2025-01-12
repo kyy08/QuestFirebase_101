@@ -37,3 +37,23 @@ class HomeViewModel (
         }
     }
 
+    fun getMhs() {
+        viewModelScope.launch {
+            repoMhs.getAllMahasiswa().onStart {
+                mhsUiState = HomeUiState.Loading
+            }
+                .catch {
+                    mhsUiState = HomeUiState.Error(e = it)
+                }
+                .collect {
+                    mhsUiState = if (it.isEmpty()) {
+                        HomeUiState.Error(Exception("Belum ada data mahasiswa"))
+                    }
+                    else {
+                        HomeUiState.Success(data = it)
+                    }
+                }
+        }
+    }
+}
+
